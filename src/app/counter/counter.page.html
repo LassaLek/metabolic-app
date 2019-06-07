@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>counter</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button expand="full" size="large" (click)="startTimer()">{{startText}}</ion-button>
+  <ion-button expand="full" size="large" color="secondary" (click)="clearTimer()">Clear</ion-button>
+
+  <ion-card>
+    {{counter}}
+  </ion-card>
+</ion-content>
