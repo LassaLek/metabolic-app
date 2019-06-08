@@ -7,7 +7,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-button expand="full" size="large" [routerLink]="['/counter']">Phosphorus</ion-button>
-  <ion-button expand="full" size="large">Glycic</ion-button>
-  <ion-button expand="full" size="large">Oxidative</ion-button>
+  <ion-button expand="full" size="large" [routerLink]="['/counter']" [queryParams]="{ ratio: 12 }">Phosphorus</ion-button>
+  <ion-button expand="full" size="large" [routerLink]="['/counter']" [queryParams]="{ ratio: 2 }">Glycic</ion-button>
+  <ion-button expand="full" size="large" [routerLink]="['/counter']" [queryParams]="{ ratio: 1/4 }">Oxidative</ion-button>
 </ion-content>

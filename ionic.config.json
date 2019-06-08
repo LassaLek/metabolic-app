@@ -1,5 +1,7 @@
 {
   "name": "metabolic-counter",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
