@@ -1,9 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
+
+declare const annyang: any;
 
 @Component({
   selector: 'app-counter',
@@ -13,7 +15,10 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
 export class CounterPage implements OnInit, OnDestroy {
   counter: number;
   timerRef;
+  voiceRef;
   isRunning = false;
+  isListening: boolean = false;
+
   startText = 'Start';
   // TODO coefitients to enum
   coefficient = 12;
@@ -22,27 +27,30 @@ export class CounterPage implements OnInit, OnDestroy {
   constructor(private localNotifications: LocalNotifications,
               private route: ActivatedRoute,
               private insomnia: Insomnia,
-              private speechRecognition: SpeechRecognition) {
+              private speechRecognition: SpeechRecognition,
+              private zone: NgZone) {
 
   }
 
   ngOnInit() {
+    if (annyang) {
+      // Let's define a command.
+      var commands = {
+        'go': () => { this.startTimer(); }
+      };
+
+      // Add our commands to annyang
+      annyang.addCommands(commands);
+      annyang.start();
+
+    } else {
+      console.log('No voice');
+    }
     // TODO
 /*    // Check feature available
     this.speechRecognition.isRecognitionAvailable()
       .then((available: boolean) => console.log(available))*/
 
-    // Start the recognition process
-    this.speechRecognition.startListening()
-      .subscribe(
-        (matches: string[]) => {
-          if (matches.includes('go')) {
-            this.startTimer();
-          }
-          console.log(matches);
-        },
-        (onerror) => console.log('error:', onerror)
-      );
 
     this.insomnia.keepAwake()
       .then(
@@ -68,18 +76,22 @@ export class CounterPage implements OnInit, OnDestroy {
       this.timerRef = setInterval(() => {
         this.counter = Date.now() - startTime;
       });
+        // this.listen();
+
     } else {
-      this.clearTimer();
 
       setTimeout(() => {
+        console.log('Notification');
         // Schedule a single notification
         this.localNotifications.schedule({
           id: 1,
-          text: 'Phosphorus',
+          text: 'Notifa',
           // sound: isAndroid? 'file://sound.mp3': 'file://beep.caf',
-          sound: 'file://assets/audio/bell.mp3',
+          sound: 'file://sound.mp3',
         });
       }, this.coefficient * this.counter);
+      this.clearTimer();
+
     }
   }
 
@@ -88,12 +100,13 @@ export class CounterPage implements OnInit, OnDestroy {
     this.startText = 'Start';
     this.counter = undefined;
     clearInterval(this.timerRef);
+    clearInterval(this.voiceRef);
   }
 
   ngOnDestroy() {
     this.sub.unsubscribe();
     clearInterval(this.timerRef);
-
+    clearInterval(this.voiceRef);
     this.insomnia.allowSleepAgain()
       .then(
         () => console.log('success'),
@@ -101,7 +114,11 @@ export class CounterPage implements OnInit, OnDestroy {
       );
   }
 
-  start() {
+  listen(): void {
+    if (annyang) {
+      // Start listening.
+    }
 
   }
+
 }
