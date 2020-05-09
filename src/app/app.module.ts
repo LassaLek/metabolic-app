@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
+import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +21,8 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     LocalNotifications,
-    Insomnia
+    Insomnia,
+    SpeechRecognition,
   ],
   bootstrap: [AppComponent]
 })

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { startTimeRange } from '@angular/core/src/profile/wtf_impl';
+import { SpeechRecognition } from '@ionic-native/speech-recognition/ngx';
 import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -21,11 +21,29 @@ export class CounterPage implements OnInit, OnDestroy {
   private sub: Subscription;
   constructor(private localNotifications: LocalNotifications,
               private route: ActivatedRoute,
-              private insomnia: Insomnia) {
+              private insomnia: Insomnia,
+              private speechRecognition: SpeechRecognition) {
 
   }
 
   ngOnInit() {
+    // TODO
+/*    // Check feature available
+    this.speechRecognition.isRecognitionAvailable()
+      .then((available: boolean) => console.log(available))*/
+
+    // Start the recognition process
+    this.speechRecognition.startListening()
+      .subscribe(
+        (matches: string[]) => {
+          if (matches.includes('go')) {
+            this.startTimer();
+          }
+          console.log(matches);
+        },
+        (onerror) => console.log('error:', onerror)
+      );
+
     this.insomnia.keepAwake()
       .then(
         () => console.log('success'),
@@ -50,20 +68,20 @@ export class CounterPage implements OnInit, OnDestroy {
       this.timerRef = setInterval(() => {
         this.counter = Date.now() - startTime;
       });
-
-
     } else {
       this.startText = 'Resume';
       clearInterval(this.timerRef);
+      const pauseTime = this.coefficient * this.counter;
+
       setTimeout(() => {
         // Schedule a single notification
         this.localNotifications.schedule({
           id: 1,
           text: 'Phosphorus',
           // sound: isAndroid? 'file://sound.mp3': 'file://beep.caf',
-          sound: 'file://sound.mp3',
+          sound: 'file://assets/audio/bell.mp3',
         });
-      }, this.coefficient * this.counter);
+      }, pauseTime);
     }
   }
 
@@ -83,5 +101,9 @@ export class CounterPage implements OnInit, OnDestroy {
         () => console.log('success'),
         () => console.log('error')
       );
+  }
+
+  start() {
+
   }
 }
