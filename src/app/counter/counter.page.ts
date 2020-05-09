@@ -69,9 +69,7 @@ export class CounterPage implements OnInit, OnDestroy {
         this.counter = Date.now() - startTime;
       });
     } else {
-      this.startText = 'Resume';
-      clearInterval(this.timerRef);
-      const pauseTime = this.coefficient * this.counter;
+      this.clearTimer();
 
       setTimeout(() => {
         // Schedule a single notification
@@ -81,7 +79,7 @@ export class CounterPage implements OnInit, OnDestroy {
           // sound: isAndroid? 'file://sound.mp3': 'file://beep.caf',
           sound: 'file://assets/audio/bell.mp3',
         });
-      }, pauseTime);
+      }, this.coefficient * this.counter);
     }
   }
 
